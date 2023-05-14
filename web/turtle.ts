@@ -1,8 +1,43 @@
 import { turtle as asd } from "./base.js";
 
+let L1 = [
+	"XXXXX",
+	"X    ",
+	"X  XX",
+	"XT XX",
+	"XXXXX"]
+
 export function main() {
-	asd.moveSpeed = 1000
+	asd.moveSpeed = 100000
+
+	asd.stiftHoch()
+	asd.vorwärts(-15)
+	asd.drehenRechts(90)
+	asd.dicke = 30
+	let t
+	asd.for(5, (zeile) => {
+		asd.for(5, (spalte) => {
+			if (L1[zeile][spalte] == "X") {
+				asd.stiftRunter()
+			}
+			if (L1[zeile][spalte] == "T") {
+				t = asd.pos()
+			}
+			asd.vorwärts(30)
+			asd.stiftHoch()
+		})
+		asd.drehenRechts(90)
+		asd.vorwärts(30)
+		asd.drehenLinks(90)
+		asd.rückwärts(150)
+	})
+	asd.geheZu(t)
+	asd.vorwärts(15)
+
+	asd.stiftRunter()
+	asd.dicke = 1
 	asd.taste = meineTaste;
+	asd.stiftRunter;
 	// asd.for(9000, () => {
 	// 	asd.segment(100, 0.01, (r) => Math.random() * 0.1)
 	// })
@@ -25,263 +60,25 @@ function meineTaste(c: string) {
 		asd.stiftRunter()
 	} else if (c == "Escape") {
 		asd.neu()
+		main()
+		return
 	} else {
 		console.log(c)
 	}
+
+	let t = asd.pos()
+	//console.log(t)
+	if (t.x < 0 || t.y < 0 || t.x > 150 || t.y > 150) {
+		//asd.neu()
+		//main()
+		return
+	}
+	let zeile = Math.floor(t.y / 30)
+	let spalte = Math.floor(t.x / 30)
+	if (L1[zeile][spalte] == "X") {
+		asd.neu()
+		main()
+		return
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

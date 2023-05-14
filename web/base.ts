@@ -66,6 +66,19 @@ class Turtle {
   rückwärts(d: number) {
     this.vorwärts(-d);
   }
+
+  pos(): Point { return this.#state.pos; }
+  geheZu(p: Point) {
+    if (this.#state.malen) {
+      const l: Line = { a: this.#state.pos, b: p, c: this.#state.farbe, d: this.dicke };
+      world.move(async () => {
+        world.draw((ctx) => drawLine(ctx, l));
+      })
+    }
+    this.#state.pos = p;
+    this.#moveState()
+  }
+
   drehenRechts(a: number) {
     this.#state.winkel += a;
     this.#moveState();
@@ -94,7 +107,7 @@ class Turtle {
     this.#moveState();
   }
   for(n: number, f: (n?: number) => void) {
-    for (let i = 1; i <= n; i++) {
+    for (let i = 0; i < n; i++) {
       f(i);
     }
   }
