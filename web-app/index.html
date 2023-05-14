@@ -1,0 +1,25 @@
+<head>
+  <title>CodeBase</title>
+  <!-- <script>
+    function onError(err) {
+      console.error('Error registering service-worker:', err)
+      document.getElementById('root').innerText = err.toString()
+    }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js', {scope: '/'})
+        .then(registration => {
+          window.serviceWorkerRegistration = registration
+          // use `await window.serviceWorkerRegistration.unregister()` to unregister the service worker
+          // or chrome://serviceworker-internals/
+        })
+        .catch(onError)
+    } else {
+      onError('Browser does not support service workers :-(')
+    }
+  </script> -->
+  <link rel="stylesheet" href="index.css">
+ <script type="module" src="js/index.js"></script>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+</body>
