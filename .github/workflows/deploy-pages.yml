@@ -28,7 +28,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: npm run build && cp -r base code web-app
 
       - uses: actions/upload-artifact@master
         with:
