@@ -14,9 +14,9 @@ window.addEventListener("load", async (e) => {
   console.log(filename)
 
   try {
+    world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
     const t = await import(`../code/${filename}.js`);
     t.main();
-    world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
   } catch (ex) {
     console.log(ex);
   }
