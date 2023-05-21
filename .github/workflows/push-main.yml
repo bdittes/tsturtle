@@ -34,12 +34,6 @@ jobs:
         with:
           path: web-app/
 
-      # - uses: actions/upload-artifact@master
-      #   with:
-      #     name: page
-      #     path: web-app
-      #     if-no-files-found: error
-
   deploy-pages:
     runs-on: ubuntu-latest
     needs: build
@@ -52,10 +46,6 @@ jobs:
       pages: "write"
 
     steps:
-      # - uses: actions/download-artifact@master
-      #   with:
-      #     name: page
-      #     path: .
-      # - uses: actions/configure-pages@v1
+      - uses: actions/configure-pages@v1
       - id: deployment
         uses: actions/deploy-pages@main
