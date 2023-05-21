@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "web-app/index.html",
   "scripts": {
-    "run": "tsc --watch --sourceMap"
+    "run": "tsc --watch --sourceMap",
+    "build": "tsc --sourceMap"
   },
   "author": "",
   "license": "ISC",
