@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "web-app/index.html",
   "scripts": {
-    "run": "tsc --watch --sourceMap",
-    "build": "tsc --sourceMap"
+    "run": "tsc --watch",
+    "buildPages": "tsc --sourceRoot /tsturtle"
   },
   "author": "",
   "license": "ISC",
