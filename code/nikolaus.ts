@@ -1,6 +1,7 @@
 import { turtle as asd } from "../base/base.js";
 
 export function main() {
+	asd.geschwindigkeit = 1000
 	asd.for(8, (i) => {
 		asd.farbe(Math.random())
 		nikolaus()

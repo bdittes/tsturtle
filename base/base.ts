@@ -33,14 +33,14 @@ class Turtle {
   #state = { ...neuState };
   #moveRemainder = 0;
   dicke = 1.5;
-  moveSpeed = 100;
+  geschwindigkeit = 100;
   taste?: (c: string) => void;
   tick?: () => void;
 
   vorwärts(d: number) {
-    const waitTime = 100 * Math.abs(d) / this.moveSpeed;
+    const waitTime = 100 * Math.abs(d) / this.geschwindigkeit;
     if (waitTime > 20) {
-      const n = Math.max(1, Math.round(waitTime / 20));
+      const n = Math.max(2, Math.round(waitTime / 20));
       for (let i = 0; i < n; i++) {
         this.vorwärts(d / n);
       }

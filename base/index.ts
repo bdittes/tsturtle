@@ -1,33 +1,36 @@
 import { world, turtle } from "./base.js";
-import * as t from "../code/turtle.js";
+// import * as t from "../code/turtle.js";
 
-window.addEventListener("load", (e) => {
+window.addEventListener("load", async (e) => {
+  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d")!;
+
+  const url = new URL(window.location.href);
+  const hashP = new URLSearchParams(url.hash);
+
+  const cameraOffset = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
+  let cameraZoom = Number(hashP.get('z') || 1);
+  const filename = url.searchParams.get('file') || 'turtle';
+  console.log(filename)
+
   try {
+    const t = await import(`../code/${filename}.js`);
     t.main();
     world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
   } catch (ex) {
     console.log(ex);
   }
 
-  let canvas = document.getElementById("canvas") as HTMLCanvasElement;
-  let ctx = canvas.getContext("2d")!;
-
-  let url = new URL(window.location.href);
-  let params = new URLSearchParams(url.hash);
-
-  let cameraOffset = { x: Number(params.get('x') || window.innerWidth / 2), y: Number(params.get('y') || window.innerHeight / 2) };
-  let cameraZoom = Number(params.get('z') || 1);
-
   function updateUrl() {
     ['x', 'y', 'z'].forEach((a) => {
-      if (!params.has(a)) {
-        params.append(a, '0');
+      if (!hashP.has(a)) {
+        hashP.append(a, '0');
       }
     });
-    params.set('x', `${cameraOffset.x}`);
-    params.set('y', `${cameraOffset.y}`);
-    params.set('z', `${cameraZoom}`);
-    url.hash = params.toString();
+    hashP.set('x', `${cameraOffset.x}`);
+    hashP.set('y', `${cameraOffset.y}`);
+    hashP.set('z', `${cameraZoom}`);
+    url.hash = hashP.toString();
     //console.log(url.toString());
     history.replaceState('', '', url.toString());
   }

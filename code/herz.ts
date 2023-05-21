@@ -7,7 +7,7 @@ import { turtle as asd } from "../base/base.js";
 // }
 
 export function main() {
-	asd.moveSpeed = 1000
+	asd.geschwindigkeit = 1000
 	asd.farbe(Math.random())
 	asd.drehenRechts(30)
 	asd.vorwärts(200)
@@ -16,11 +16,11 @@ export function main() {
 	asd.segment(100, 180, (r) => r)
 	asd.drehenRechts(180)
 	asd.farbe(Math.random())
-	asd.for(9000, () => {
-		asd.segment(100, 0.01, (r) => Math.random() * 0.1)
+	asd.for(900, () => {
+		asd.segment(100, 0.1, (r) => Math.random() * 0.1)
 	})
-	asd.for(9000, () => {
-		asd.segment(100, 0.01, (r) => Math.random() * 0.1 + 0.5)
+	asd.for(900, () => {
+		asd.segment(100, 0.1, (r) => Math.random() * 0.1 + 0.5)
 	})
 	asd.farbe(Math.random())
 	asd.drehenLinks(30)
