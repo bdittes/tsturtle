@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "web-app/index.html",
   "scripts": {
-    "run": "tsc --p ./web --watch --sourceMap"
+    "run": "tsc --watch --sourceMap"
   },
   "author": "",
   "license": "ISC",

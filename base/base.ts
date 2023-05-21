@@ -1,9 +1,9 @@
-type Color = string;
-type Point = { x: number, y: number };
-type State = { pos: Point, winkel: number, farbe: Color, malen: boolean };
-type Line = { a: Point, b: Point, c: Color, d: number };
-type Rect = { a: Point, b: Point, c: Color };
-type Text = { p: Point, text: string, c: Color, size: number, font: string };
+export type Color = string;
+export type Point = { x: number, y: number };
+export type State = { pos: Point, winkel: number, farbe: Color, malen: boolean };
+export type Line = { a: Point, b: Point, c: Color, d: number };
+export type Rect = { a: Point, b: Point, c: Color };
+export type Text = { p: Point, text: string, c: Color, size: number, font: string };
 type DrawFn = (ctx: CanvasRenderingContext2D) => void;
 type MoveFn = () => Promise<void>;
 
@@ -69,7 +69,10 @@ class Turtle {
   }
 
   pos(): Point { return this.#state.pos; }
-  geheZu(p: Point) {
+  geheZu(p?: Point) {
+    if (p === undefined) {
+      return;
+    }
     if (this.#state.malen) {
       const l: Line = { a: this.#state.pos, b: p, c: this.#state.farbe, d: this.dicke };
       world.move(async () => {
@@ -107,12 +110,12 @@ class Turtle {
     this.#state.malen = true;
     this.#moveState();
   }
-  for(n: number, f: (n?: number) => void) {
+  for(n: number, f: (n: number) => void) {
     for (let i = 0; i < n; i++) {
       f(i);
     }
   }
-  segment(durchmesser: number, winkel: number, farb?: (r) => string | number) {
+  segment(durchmesser: number, winkel: number, farb?: (r: number) => string | number) {
     let n = Math.floor(Math.max(4, Math.abs(durchmesser * winkel / 360 * 0.7)));
     this.for(n, (i) => {
       if (farb) this.farbe(farb(i / n))
@@ -208,6 +211,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 // Input 0..1, output 0..255.
 function HSVtoRGB(h: number, s: number, v: number) {
   var r: number, g: number, b: number, i: number, f: number, p: number, q: number, t: number;
+  r = g = b = 0;
   i = Math.floor(h * 6);
   f = h * 6 - i;
   p = v * (1 - s);

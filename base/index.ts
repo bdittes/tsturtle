@@ -1,12 +1,5 @@
-/*
-https://github.com/coreybutler/nvm-windows/releases/tag/1.1.11
-nvm install 18.16.0
-nvm use 18.16.0
-npm install
-*/
-
 import { world, turtle } from "./base.js";
-import * as t from "./turtle.js";
+import * as t from "../code/turtle.js";
 
 window.addEventListener("load", (e) => {
   try {
@@ -17,17 +10,15 @@ window.addEventListener("load", (e) => {
   }
 
   let canvas = document.getElementById("canvas") as HTMLCanvasElement;
-  let ctx = canvas.getContext("2d");
+  let ctx = canvas.getContext("2d")!;
 
   let url = new URL(window.location.href);
-  let params = new URLSearchParams(url.search);
+  let params = new URLSearchParams(url.hash);
 
   let cameraOffset = { x: Number(params.get('x') || window.innerWidth / 2), y: Number(params.get('y') || window.innerHeight / 2) };
   let cameraZoom = Number(params.get('z') || 1);
 
   function updateUrl() {
-    let url = new URL(window.location.href);
-    let params = new URLSearchParams(url.search);
     ['x', 'y', 'z'].forEach((a) => {
       if (!params.has(a)) {
         params.append(a, '0');
@@ -36,7 +27,7 @@ window.addEventListener("load", (e) => {
     params.set('x', `${cameraOffset.x}`);
     params.set('y', `${cameraOffset.y}`);
     params.set('z', `${cameraZoom}`);
-    url.search = params.toString();
+    url.hash = params.toString();
     //console.log(url.toString());
     history.replaceState('', '', url.toString());
   }
@@ -66,7 +57,7 @@ window.addEventListener("load", (e) => {
   }
 
   // Gets the relevant location from a mouse or single touch event
-  function getEventLocation(e) {
+  function getEventLocation(e: any) {
     if (e.touches && e.touches.length == 1) {
       return { x: e.touches[0].clientX, y: e.touches[0].clientY };
     } else if (e.clientX && e.clientY) {
@@ -78,9 +69,12 @@ window.addEventListener("load", (e) => {
   let dragStart = { x: 0, y: 0 };
 
   function onPointerDown(e: MouseEvent) {
-    isDragging = true;
-    dragStart.x = getEventLocation(e).x / cameraZoom - cameraOffset.x;
-    dragStart.y = getEventLocation(e).y / cameraZoom - cameraOffset.y;
+    const ep = getEventLocation(e);
+    if (ep) {
+      isDragging = true;
+      dragStart.x = ep.x / cameraZoom - cameraOffset.x;
+      dragStart.y = ep.y / cameraZoom - cameraOffset.y;
+    }
   }
 
   function onPointerUp(e: MouseEvent) {
@@ -91,9 +85,10 @@ window.addEventListener("load", (e) => {
   }
 
   function onPointerMove(e: MouseEvent) {
-    if (isDragging) {
-      cameraOffset.x = getEventLocation(e).x / cameraZoom - dragStart.x;
-      cameraOffset.y = getEventLocation(e).y / cameraZoom - dragStart.y;
+    const ep = getEventLocation(e);
+    if (isDragging && ep) {
+      cameraOffset.x = ep.x / cameraZoom - dragStart.x;
+      cameraOffset.y = ep.y / cameraZoom - dragStart.y;
     }
   }
 
@@ -106,7 +101,7 @@ window.addEventListener("load", (e) => {
     }
   }
 
-  let initialPinchDistance = null;
+  let initialPinchDistance: number | null = null;
   let lastZoom = cameraZoom;
 
   function handlePinch(e: TouchEvent) {
@@ -126,7 +121,7 @@ window.addEventListener("load", (e) => {
     }
   }
 
-  function adjustZoom(zoomAmount?: number, zoomFactor?: number) {
+  function adjustZoom(zoomAmount: number | null, zoomFactor: number | null) {
     if (!isDragging) {
       if (zoomAmount) {
         cameraZoom += zoomAmount;

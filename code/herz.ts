@@ -1,4 +1,4 @@
-import { turtle as asd } from "./base.js";
+import { turtle as asd } from "../base/base.js";
 
 // export function main() {
 // 	asd.moveSpeed = 30

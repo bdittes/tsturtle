@@ -1,4 +1,4 @@
-import { turtle as asd } from "./base.js";
+import { turtle as asd, Point } from "../base/base.js";
 
 let L1 = [
 	"XXXXX",
