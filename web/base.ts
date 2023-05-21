@@ -35,6 +35,7 @@ class Turtle {
   dicke = 1.5;
   moveSpeed = 100;
   taste?: (c: string) => void;
+  tick?: () => void;
 
   vorwärts(d: number) {
     const waitTime = 100 * Math.abs(d) / this.moveSpeed;
@@ -142,7 +143,6 @@ class World {
   turtleState: State = { ...neuState };
   #moveFns: MoveFn[] = [];
   #moveI = 0;
-  #moving = false;
 
   draw(f: DrawFn) {
     this.#drawFns.push(f);
@@ -175,21 +175,25 @@ class World {
       c: t.farbe, d: 1
     });
   }
-  async executeMoves() {
-    if (this.#moving) {
-      return;
+  async startLoop() {
+    while (true) {
+      const startMs = Date.now();
+      for (; this.#moveI < this.#moveFns.length; this.#moveI++) {
+        await this.#moveFns[this.#moveI]();
+      }
+      const diffMs = Date.now() - startMs;
+      const tickMs = 50;
+      if (diffMs < tickMs) {
+        await sleep(tickMs - diffMs);
+      }
+      if (turtle.tick) {
+        turtle.tick();
+      }
     }
-    this.#moving = true;
-    for (; this.#moveI < this.#moveFns.length; this.#moveI++) {
-      await this.#moveFns[this.#moveI]();
-    }
-    this.#moving = false;
   }
 }
 
 export const world = new World();
-
-
 
 
 function newPos(pos: Point, angle: number, d: number) {

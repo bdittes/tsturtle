@@ -3,7 +3,7 @@ import { turtle as asd } from "./base.js";
 let L1 = [
 	"XXXXX",
 	"X    ",
-	"X  XX",
+	"X   X",
 	"XT XX",
 	"XXXXX"]
 
@@ -37,10 +37,30 @@ export function main() {
 	asd.stiftRunter()
 	asd.dicke = 1
 	asd.taste = meineTaste;
-	asd.stiftRunter;
+	asd.tick = meinTick;
 	// asd.for(9000, () => {
 	// 	asd.segment(100, 0.01, (r) => Math.random() * 0.1)
 	// })
+}
+
+function meinTick() {
+	asd.vorwärts(1)
+
+
+	let t = asd.pos()
+	//console.log(t)
+	if (t.x < 0 || t.y < 0 || t.x > 150 || t.y > 150) {
+		//asd.neu()
+		//main()
+		return
+	}
+	let zeile = Math.floor(t.y / 30)
+	let spalte = Math.floor(t.x / 30)
+	if (L1[zeile][spalte] == "X") {
+		asd.neu()
+		main()
+		return
+	}
 }
 
 function meineTaste(c: string) {
@@ -64,21 +84,6 @@ function meineTaste(c: string) {
 		return
 	} else {
 		console.log(c)
-	}
-
-	let t = asd.pos()
-	//console.log(t)
-	if (t.x < 0 || t.y < 0 || t.x > 150 || t.y > 150) {
-		//asd.neu()
-		//main()
-		return
-	}
-	let zeile = Math.floor(t.y / 30)
-	let spalte = Math.floor(t.x / 30)
-	if (L1[zeile][spalte] == "X") {
-		asd.neu()
-		main()
-		return
 	}
 }
 

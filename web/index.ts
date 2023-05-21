@@ -8,14 +8,10 @@ npm install
 import { world, turtle } from "./base.js";
 import * as t from "./turtle.js";
 
-function move() {
-  world.executeMoves().then(() => { }).catch((ex2) => console.log(ex2));
-}
-
 window.addEventListener("load", (e) => {
   try {
     t.main();
-    move();
+    world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
   } catch (ex) {
     console.log(ex);
   }
@@ -165,7 +161,6 @@ window.addEventListener("load", (e) => {
       let c = (e.ctrlKey ? "c-" : "") + e.key.toString();
       //console.log(c);
       turtle.taste(c);
-      move();
     }
   })
 
