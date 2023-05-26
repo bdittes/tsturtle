@@ -1,15 +1,17 @@
 {
   "name": "tsturtle",
   "version": "1.0.0",
-  "main": "web-app/index.html",
+  "main": "web/index.html",
   "scripts": {
-    "run": "tsc --watch",
-    "buildPages": "tsc --sourceRoot /tsturtle"
+    "run": "npm run clean && tsc --watch",
+    "build": "npm run clean && tsc --sourceRoot /tsturtle && shx mkdir dist && shx cp -r web/* dist && shx cp -r base code dist",
+    "clean": "shx rm -rf dist web/js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "shx": "^0.3.4",
     "typescript": "^5.0.4"
   }
 }

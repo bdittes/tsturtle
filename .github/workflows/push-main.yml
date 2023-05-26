@@ -28,11 +28,11 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run buildPages && cp -r base code web-app
+        run: npm run build
 
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: web-app/
+          path: dist/
 
   deploy-pages:
     runs-on: ubuntu-latest
