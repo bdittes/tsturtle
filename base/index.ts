@@ -16,9 +16,6 @@ window.addEventListener("load", async (e) => {
   try {
     const t = await import(`../code/${filename}.js`);
     world.turtleMain = t.main;
-    // if (!debug) {
-    //   world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
-    // }
   } catch (ex) {
     console.log(ex);
   }
@@ -153,6 +150,5 @@ window.addEventListener("load", async (e) => {
   })
 
   // Ready, set, go
-  //draw();
   requestAnimationFrame(draw);
 });

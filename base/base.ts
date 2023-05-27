@@ -48,20 +48,10 @@ class Turtle {
     const np = newPos(this.#state.pos, this.#state.winkel, d);
     if (this.#state.malen) {
       const l: Line = { a: this.#state.pos, b: np, c: this.#state.farbe, d: this.dicke };
-      //world.move(async () => {
       world.draw((ctx) => drawLine(ctx, l));
-      //})
     }
     this.#state.pos = np;
     this.#moveState(waitTime);
-    //world.move(async () => {
-    //if (waitTime + this.#moveRemainder > 10) {
-    //  await sleep(waitTime);
-    //  this.#moveRemainder = 0;
-    //} else {
-    //  this.#moveRemainder += waitTime;
-    //}
-    //});
   }
   rückwärts(d: number) {
     this.vorwärts(-d);
@@ -74,9 +64,7 @@ class Turtle {
     }
     if (this.#state.malen) {
       const l: Line = { a: this.#state.pos, b: p, c: this.#state.farbe, d: this.dicke };
-      //world.move(async () => {
       world.draw((ctx) => drawLine(ctx, l));
-      //})
     }
     this.#state.pos = p;
     this.#moveState()
@@ -282,28 +270,6 @@ class World {
       console.log(ex);
     }
   }
-  /*
-  console.log(c);
-    if (turtle.taste) {
-    turtle.taste(c);
-  }
-  async startLoop() {
-    while (true) {
-      const startMs = Date.now();
-      for (; this.#moveI < this.#moveFns.length; this.#moveI++) {
-        await this.#moveFns[this.#moveI]();
-      }
-      const diffMs = Date.now() - startMs;
-      const tickMs = 50;
-      if (diffMs < tickMs) {
-        await sleep(tickMs - diffMs);
-      }
-      if (turtle.tick) {
-        turtle.tick();
-      }
-    }
-  }
-  */
 }
 
 export const world = new World();
