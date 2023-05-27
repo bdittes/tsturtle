@@ -1,22 +1,24 @@
-import { world, turtle } from "./base.js";
+import { world } from "./base.js";
 // import * as t from "../code/turtle.js";
 
 window.addEventListener("load", async (e) => {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d")!;
 
   const url = new URL(window.location.href);
   const hashP = new URLSearchParams(url.hash);
 
-  const cameraOffset = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
-  let cameraZoom = Number(hashP.get('z') || 1);
+  world.canvasCenter = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
+  world.canvasZoom = Number(hashP.get('z') || 1);
+  const debug = url.searchParams.has('debug');
   const filename = url.searchParams.get('file') || 'turtle';
   console.log(filename)
 
   try {
-    world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
     const t = await import(`../code/${filename}.js`);
-    t.main();
+    world.turtleMain = t.main;
+    // if (!debug) {
+    //   world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
+    // }
   } catch (ex) {
     console.log(ex);
   }
@@ -27,9 +29,9 @@ window.addEventListener("load", async (e) => {
         hashP.append(a, '0');
       }
     });
-    hashP.set('x', `${cameraOffset.x}`);
-    hashP.set('y', `${cameraOffset.y}`);
-    hashP.set('z', `${cameraZoom}`);
+    hashP.set('x', `${world.canvasCenter.x}`);
+    hashP.set('y', `${world.canvasCenter.y}`);
+    hashP.set('z', `${world.canvasZoom}`);
     url.hash = hashP.toString();
     //console.log(url.toString());
     history.replaceState('', '', url.toString());
@@ -40,22 +42,13 @@ window.addEventListener("load", async (e) => {
   let MIN_ZOOM = 0.1;
   let SCROLL_SENSITIVITY = -0.0015;
 
+  world.init(canvas);
+
   function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-
-    // Translate to the canvas centre before zooming - so you'll always zoom on what you're looking directly at
-    ctx.translate(window.innerWidth / 2, window.innerHeight / 2);
-    ctx.scale(cameraZoom, cameraZoom);
-    ctx.translate(
-      -window.innerWidth / 2 + cameraOffset.x,
-      -window.innerHeight / 2 + cameraOffset.y
-    );
-    world.drawOnCanvas(ctx);
+    world.drawOnCanvas();
     requestAnimationFrame(draw);
   }
 
@@ -75,8 +68,8 @@ window.addEventListener("load", async (e) => {
     const ep = getEventLocation(e);
     if (ep) {
       isDragging = true;
-      dragStart.x = ep.x / cameraZoom - cameraOffset.x;
-      dragStart.y = ep.y / cameraZoom - cameraOffset.y;
+      dragStart.x = ep.x / world.canvasZoom - world.canvasCenter.x;
+      dragStart.y = ep.y / world.canvasZoom - world.canvasCenter.y;
     }
   }
 
@@ -84,14 +77,14 @@ window.addEventListener("load", async (e) => {
     updateUrl();
     isDragging = false;
     initialPinchDistance = null;
-    lastZoom = cameraZoom;
+    lastZoom = world.canvasZoom;
   }
 
   function onPointerMove(e: MouseEvent) {
     const ep = getEventLocation(e);
     if (isDragging && ep) {
-      cameraOffset.x = ep.x / cameraZoom - dragStart.x;
-      cameraOffset.y = ep.y / cameraZoom - dragStart.y;
+      world.canvasCenter.x = ep.x / world.canvasZoom - dragStart.x;
+      world.canvasCenter.y = ep.y / world.canvasZoom - dragStart.y;
     }
   }
 
@@ -105,7 +98,7 @@ window.addEventListener("load", async (e) => {
   }
 
   let initialPinchDistance: number | null = null;
-  let lastZoom = cameraZoom;
+  let lastZoom = world.canvasZoom;
 
   function handlePinch(e: TouchEvent) {
     e.preventDefault();
@@ -127,14 +120,14 @@ window.addEventListener("load", async (e) => {
   function adjustZoom(zoomAmount: number | null, zoomFactor: number | null) {
     if (!isDragging) {
       if (zoomAmount) {
-        cameraZoom += zoomAmount;
+        world.canvasZoom += zoomAmount;
       } else if (zoomFactor) {
         //console.log(zoomFactor);
-        cameraZoom = zoomFactor * lastZoom;
+        world.canvasZoom = zoomFactor * lastZoom;
       }
 
-      cameraZoom = Math.min(cameraZoom, MAX_ZOOM);
-      cameraZoom = Math.max(cameraZoom, MIN_ZOOM);
+      world.canvasZoom = Math.min(world.canvasZoom, MAX_ZOOM);
+      world.canvasZoom = Math.max(world.canvasZoom, MIN_ZOOM);
       //console.log(zoomAmount);
     }
   }
@@ -151,17 +144,15 @@ window.addEventListener("load", async (e) => {
   canvas.addEventListener("touchmove", (e) => handleTouch(e, onPointerMove));
   canvas.addEventListener("wheel", (e) => {
     adjustZoom(null, Math.pow(3, e.deltaY * SCROLL_SENSITIVITY));
-    lastZoom = cameraZoom;
+    lastZoom = world.canvasZoom;
     updateUrl();
   });
   window.addEventListener("keyup", (e) => {
-    if (turtle.taste) {
-      let c = (e.ctrlKey ? "c-" : "") + e.key.toString();
-      //console.log(c);
-      turtle.taste(c);
-    }
+    const c = (e.ctrlKey ? "c-" : "") + e.key.toString();
+    world.keyPress(c);
   })
 
   // Ready, set, go
-  draw();
+  //draw();
+  requestAnimationFrame(draw);
 });

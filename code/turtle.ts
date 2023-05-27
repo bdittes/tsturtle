@@ -8,7 +8,7 @@ let L1 = [
 	"XXXXX"]
 
 export function main() {
-	asd.geschwindigkeit = 100000
+	asd.geschwindigkeit = 1000
 
 	asd.stiftHoch()
 	asd.vorwärts(-15)
