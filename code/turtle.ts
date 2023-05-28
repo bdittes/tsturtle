@@ -7,7 +7,7 @@ let L1 = [
 	"XT XX",
 	"XXXXX"]
 
-export function main() {
+export async function main() {
 	asd.geschwindigkeit = 100000
 
 	asd.stiftHoch()

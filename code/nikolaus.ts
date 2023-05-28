@@ -1,18 +1,20 @@
 import { turtle as asd } from "../base/base.js";
 
-export function main() {
-	asd.geschwindigkeit = 1000
-	asd.for(8, (i) => {
+export async function main() {
+	asd.geschwindigkeit = 100
+	for (let i = 0; i < 8; i++) {
 		asd.farbe(Math.random())
 		nikolaus()
-	})
+		await asd.ping()
+	}
 	asd.stiftHoch()
 	asd.rückwärts(100 + 200 / Math.SQRT2)
 	asd.drehenRechts(90)
 	asd.stiftRunter()
-	asd.for(20, (k) => {
+	for (let k = 0; k < 20; k++) {
 		kreis(k * 25)
-	})
+		await asd.ping()
+	}
 }
 
 function kreis(d: number) {

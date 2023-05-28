@@ -5,7 +5,7 @@ export type Line = { a: Point, b: Point, c: Color, d: number };
 export type Rect = { a: Point, b: Point, c: Color };
 export type Text = { p: Point, text: string, c: Color, size: number, font: string };
 type DrawFn = (ctx: CanvasRenderingContext2D) => void;
-type MoveFn = () => Promise<void>;
+type MoveFn = () => Promise<void> | void;
 
 function drawLine(ctx: CanvasRenderingContext2D, l: Line) {
   ctx.beginPath();
@@ -34,8 +34,8 @@ class Turtle {
   #moveRemainder = 0;
   dicke = 1.5;
   geschwindigkeit = 100;
-  taste?: (c: string) => void;
-  tick?: () => void;
+  taste?: (c: string) => Promise<void> | void;
+  tick?: () => Promise<void> | void;
 
   vorwärts(d: number) {
     const waitTime = 100 * Math.abs(d) / this.geschwindigkeit;
@@ -115,6 +115,11 @@ class Turtle {
       f(i);
     }
   }
+  async fora(n: number, f: (n: number) => Promise<void> | void) {
+    for (let i = 0; i < n; i++) {
+      await f(i);
+    }
+  }
   segment(durchmesser: number, winkel: number, farb?: (r: number) => string | number) {
     let n = Math.floor(Math.max(4, Math.abs(durchmesser * winkel / 360 * 0.7)));
     this.for(n, (i) => {
@@ -131,6 +136,17 @@ class Turtle {
     world.clear();
   }
 
+  // In a normally running program, this does nothing.
+  // When step-by-step debugging, an 'await ping()' in the program allows
+  // the debugger to draw all pending moves before resuming debugging.
+  // See nikolaus.ts.
+  async ping() {
+    const targetVersion = world.latestMoveVersion;
+    while (world.drawnVersion < targetVersion) {
+      await world.executeMoves();
+    }
+  }
+
   #moveState() {
     const rec = { ...this.#state };
     world.move(async () => {
@@ -144,14 +160,20 @@ export const turtle = new Turtle();
 class World {
   #drawFns: DrawFn[] = [];
   turtleState: State = { ...neuState };
-  #moveFns: MoveFn[] = [];
+  #moveFns: { fn: MoveFn, v: number }[] = [];
   #moveI = 0;
+  turtleMain?: MoveFn;
+  #unprocessedKeys: string[] = [];
+  latestMoveVersion = 1;
+  movedVersion = 0;
+  drawnVersion = 0;
 
   draw(f: DrawFn) {
     this.#drawFns.push(f);
   }
   move(f: MoveFn) {
-    this.#moveFns.push(f);
+    this.latestMoveVersion++;
+    this.#moveFns.push({ fn: f, v: this.latestMoveVersion });
   }
   clear() {
     this.move(async () => {
@@ -160,10 +182,12 @@ class World {
     });
   }
 
+  keyPress(c: string) {
+    this.#unprocessedKeys.push(c);
+  }
+
   drawOnCanvas(ctx: CanvasRenderingContext2D) {
-    this.#drawFns.forEach((f) => {
-      f(ctx)
-    });
+    this.#drawFns.forEach((f) => f(ctx));
     const t = this.turtleState;
     drawLine(
       ctx, {
@@ -177,20 +201,38 @@ class World {
       b: newPos(t.pos, t.winkel + (t.malen ? 0 : 15), t.malen ? 10 : 7),
       c: t.farbe, d: 1
     });
+    this.drawnVersion = this.movedVersion;
   }
+
+  async executeMoves() {
+    const startMs = Date.now();
+    for (; this.#moveI < this.#moveFns.length; this.#moveI++) {
+      await this.#moveFns[this.#moveI].fn();
+      this.movedVersion = this.#moveFns[this.#moveI].v;
+    }
+    const diffMs = Date.now() - startMs;
+    const tickMs = 50;
+    if (diffMs < tickMs) {
+      await sleep(tickMs - diffMs);
+    }
+  }
+
   async startLoop() {
+    if (this.turtleMain) {
+      await this.turtleMain();
+    }
     while (true) {
-      const startMs = Date.now();
-      for (; this.#moveI < this.#moveFns.length; this.#moveI++) {
-        await this.#moveFns[this.#moveI]();
+      await this.executeMoves();
+
+      for (let i = 0; i < this.#unprocessedKeys.length; i++) {
+        if (turtle.taste) {
+          await turtle.taste(this.#unprocessedKeys[i]);
+        }
       }
-      const diffMs = Date.now() - startMs;
-      const tickMs = 50;
-      if (diffMs < tickMs) {
-        await sleep(tickMs - diffMs);
-      }
+      this.#unprocessedKeys.length = 0;
+
       if (turtle.tick) {
-        turtle.tick();
+        await turtle.tick();
       }
     }
   }

@@ -1,4 +1,4 @@
-import { world, turtle } from "./base.js";
+import { world } from "./base.js";
 // import * as t from "../code/turtle.js";
 
 window.addEventListener("load", async (e) => {
@@ -14,9 +14,9 @@ window.addEventListener("load", async (e) => {
   console.log(filename)
 
   try {
-    world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
     const t = await import(`../code/${filename}.js`);
-    t.main();
+    world.turtleMain = t.main;
+    world.startLoop().then(() => { }).catch((ex2) => console.log(ex2));
   } catch (ex) {
     console.log(ex);
   }
@@ -155,13 +155,11 @@ window.addEventListener("load", async (e) => {
     updateUrl();
   });
   window.addEventListener("keyup", (e) => {
-    if (turtle.taste) {
-      let c = (e.ctrlKey ? "c-" : "") + e.key.toString();
-      //console.log(c);
-      turtle.taste(c);
-    }
+    let c = (e.ctrlKey ? "c-" : "") + e.key.toString();
+    //console.log(c);
+    world.keyPress(c);
   })
 
   // Ready, set, go
-  draw();
+  requestAnimationFrame(draw);
 });
