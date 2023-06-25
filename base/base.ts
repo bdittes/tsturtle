@@ -69,6 +69,7 @@ class Turtle {
   }
 
   pos(): Point { return this.#state.pos; }
+  winkel(): number { return this.#state.winkel; }
   geheZu(p?: Point) {
     if (p === undefined) {
       return;

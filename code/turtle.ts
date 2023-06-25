@@ -1,22 +1,29 @@
 import { turtle as asd, Point } from "../base/base.js";
 
 let L1 = [
-	"XXXXX",
-	"X    ",
-	"X   X",
-	"XT XX",
-	"XXXXX"]
+	"XXXXXXXXXXX",
+	"X        XX",
+	"X XXXXXX  X",
+	"X X    X  X",
+	"  X XX X  X",
+	" XX XX X  X",
+	"X   XX X  X",
+	"X XXXX X  X",
+	"X    X    X",
+	"XT   X    X",
+	"XXXXXXXXXXX",
+]
 
 export async function main() {
-	asd.geschwindigkeit = 100000
+	asd.geschwindigkeit = 10000000000
 
 	asd.stiftHoch()
 	asd.vorwärts(-15)
 	asd.drehenRechts(90)
 	asd.dicke = 30
 	let t
-	asd.for(5, (zeile) => {
-		asd.for(5, (spalte) => {
+	asd.for(L1.length, (zeile) => {
+		asd.for(L1[zeile].length, (spalte) => {
 			if (L1[zeile][spalte] == "X") {
 				asd.stiftRunter()
 			}
@@ -29,38 +36,29 @@ export async function main() {
 		asd.drehenRechts(90)
 		asd.vorwärts(30)
 		asd.drehenLinks(90)
-		asd.rückwärts(150)
+		asd.rückwärts(L1[zeile].length * 30)
 	})
 	asd.geheZu(t)
 	asd.vorwärts(15)
 
 	asd.stiftRunter()
+	asd.drehenLinks(90)
 	asd.dicke = 1
 	asd.taste = meineTaste;
 	asd.tick = meinTick;
-	// asd.for(9000, () => {
-	// 	asd.segment(100, 0.01, (r) => Math.random() * 0.1)
-	// })
 }
+let pause = true // false
+let gs = 3
+let kugelWinkel = 0.0
+let gk = 5
 
 function meinTick() {
-	asd.vorwärts(1)
-
-
-	let t = asd.pos()
-	//console.log(t)
-	if (t.x < 0 || t.y < 0 || t.x > 150 || t.y > 150) {
-		//asd.neu()
-		//main()
-		return
+	kugel()
+	asd.farbe(Math.random())
+	if (!pause) {
+		asd.vorwärts(gs)
 	}
-	let zeile = Math.floor(t.y / 30)
-	let spalte = Math.floor(t.x / 30)
-	if (L1[zeile][spalte] == "X") {
-		asd.neu()
-		main()
-		return
-	}
+	wände()
 }
 
 function meineTaste(c: string) {
@@ -71,14 +69,16 @@ function meineTaste(c: string) {
 	} else if (c == "d") {
 		asd.drehenRechts(22.5)
 	} else if (c == "w") {
-		asd.vorwärts(10)
+		//asd.vorwärts(10)
+
 	} else if (c == " ") {
-		asd.farbe(Math.random())
+		pause = !pause
 	} else if (c == "e") {
 		asd.stiftHoch()
 	} else if (c == "q") {
 		asd.stiftRunter()
 	} else if (c == "Escape") {
+		kugelWinkel = 0
 		asd.neu()
 		main()
 		return
@@ -87,3 +87,52 @@ function meineTaste(c: string) {
 	}
 }
 
+function wände() {
+	let t = asd.pos()
+	//console.log(t)
+	let zeile = Math.floor(t.y / 30)
+	let spalte = Math.floor(t.x / 30)
+	if (t.x < 0 || t.y < 0 || t.y > 30 * L1.length || t.x > 30 * L1[zeile].length) {
+		//asd.neu()
+		//main()
+		return
+	}
+	if (L1[zeile][spalte] == "X") {
+		kugelWinkel = 0
+		asd.neu()
+		main()
+		return
+	}
+}
+
+function kugel() {
+	if (!pause) {
+		kugelWinkel += gk;
+	}
+	// asd.farbe(Math.random())
+	const pos = asd.pos()
+	const winkel = asd.winkel()
+	asd.neu()
+	main()
+	asd.stiftHoch()
+	let x = 175 + Math.sin(kugelWinkel / 360 * 2 * Math.PI) * 80
+	let y = 175 - Math.cos(kugelWinkel / 360 * 2 * Math.PI) * 80
+	asd.geheZu({ x, y })
+	asd.stiftRunter()
+	asd.dicke = 10
+	asd.segment(20, 360)
+	asd.stiftHoch()
+	asd.geheZu(pos)
+	asd.drehenLinks(asd.winkel())
+	asd.drehenRechts(winkel)
+	asd.dicke = 1
+	asd.stiftRunter()
+	let dx = x - pos.x
+	let dy = y - pos.y
+	let abstand = Math.sqrt(dx * dx + dy * dy)
+	if (abstand <= 14) {
+		kugelWinkel = 0
+		asd.neu()
+		main()
+	}
+}
