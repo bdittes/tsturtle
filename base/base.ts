@@ -35,6 +35,7 @@ class Turtle {
   dicke = 1.5;
   geschwindigkeit = 100;
   taste?: (c: string) => Promise<void> | void;
+  click?: (p: Point) => Promise<void> | void;
   tick?: () => Promise<void> | void;
 
   vorwärts(d: number) {

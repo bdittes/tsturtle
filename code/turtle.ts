@@ -16,7 +16,7 @@ let L1 = [
 
 export async function main() {
 	asd.geschwindigkeit = 10000000000
-
+	//console.log(asd.pos())
 	asd.stiftHoch()
 	asd.vorwärts(-15)
 	asd.drehenRechts(90)
@@ -46,6 +46,7 @@ export async function main() {
 	asd.dicke = 1
 	asd.taste = meineTaste;
 	asd.tick = meinTick;
+	asd.click = meinClick;
 }
 let pause = true // false
 let gs = 3
@@ -59,6 +60,10 @@ function meinTick() {
 		asd.vorwärts(gs)
 	}
 	wände()
+}
+
+function meinClick(p: Point) {
+	asd.geheZu(p)
 }
 
 function meineTaste(c: string) {

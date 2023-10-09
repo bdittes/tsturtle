@@ -1,4 +1,4 @@
-import { world } from "./base.js";
+import { turtle, world, Point } from "./base.js";
 // import * as t from "../code/turtle.js";
 
 window.addEventListener("load", async (e) => {
@@ -6,12 +6,27 @@ window.addEventListener("load", async (e) => {
   const ctx = canvas.getContext("2d")!;
 
   const url = new URL(window.location.href);
+  while (url.hash.startsWith('#%23')) {
+    url.hash = url.hash.replace('#%23', '');
+  }
+  console.log('start hash', url.hash);
   const hashP = new URLSearchParams(url.hash);
 
-  const cameraOffset = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
+  let cameraOffset = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
   let cameraZoom = Number(hashP.get('z') || 1);
+  updateUrl();
+
   const filename = url.searchParams.get('file') || 'turtle';
   console.log(filename)
+
+  function transform(dp: Point, offset?: Point): Point {
+    const o = offset || cameraOffset;
+    const tx = {
+      x: (dp.x - window.innerWidth / 2) / cameraZoom + window.innerWidth / 2 - o.x,
+      y: (dp.y - window.innerHeight / 2) / cameraZoom + window.innerHeight / 2 - o.y,
+    };
+    return tx;
+  }
 
   try {
     const t = await import(`../code/${filename}.js`);
@@ -26,12 +41,15 @@ window.addEventListener("load", async (e) => {
       if (!hashP.has(a)) {
         hashP.append(a, '0');
       }
+      if (hashP.has('#' + a)) {
+        hashP.delete('#' + a);
+      }
     });
     hashP.set('x', `${cameraOffset.x}`);
     hashP.set('y', `${cameraOffset.y}`);
     hashP.set('z', `${cameraZoom}`);
     url.hash = hashP.toString();
-    //console.log(url.toString());
+    // console.log('hash', url.hash);
     history.replaceState('', '', url.toString());
   }
 
@@ -69,19 +87,32 @@ window.addEventListener("load", async (e) => {
   }
 
   let isDragging = false;
-  let dragStart = { x: 0, y: 0 };
+  let dragStartWorld = { x: 0, y: 0 };
+  let dragStartReal = { x: 0, y: 0 };
 
   function onPointerDown(e: MouseEvent) {
     const ep = getEventLocation(e);
     if (ep) {
       isDragging = true;
-      dragStart.x = ep.x / cameraZoom - cameraOffset.x;
-      dragStart.y = ep.y / cameraZoom - cameraOffset.y;
+      dragStartReal = ep;
+      dragStartWorld = transform(ep);
+      // console.log("down", dragStartWorld)
     }
   }
 
   function onPointerUp(e: MouseEvent) {
     updateUrl();
+    const ep = getEventLocation(e);
+    if (ep && turtle.click) {
+      const end = transform(ep);
+      // console.log("up", end)
+
+      if (isDragging &&
+        Math.abs(dragStartReal.x - ep.x) < 3 &&
+        Math.abs(dragStartReal.y - ep.y) < 3) {
+        turtle.click(end)
+      }
+    }
     isDragging = false;
     initialPinchDistance = null;
     lastZoom = cameraZoom;
@@ -90,8 +121,7 @@ window.addEventListener("load", async (e) => {
   function onPointerMove(e: MouseEvent) {
     const ep = getEventLocation(e);
     if (isDragging && ep) {
-      cameraOffset.x = ep.x / cameraZoom - dragStart.x;
-      cameraOffset.y = ep.y / cameraZoom - dragStart.y;
+      cameraOffset = transform(ep, dragStartWorld);
     }
   }
 
