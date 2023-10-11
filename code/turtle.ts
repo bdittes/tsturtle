@@ -1,143 +1,75 @@
 import { turtle as asd, Point } from "../base/base.js";
 
-let L1 = [
-	"XXXXXXXXXXX",
-	"X        XX",
-	"X XXXXXX  X",
-	"X X    X  X",
-	"  X XX X  X",
-	" XX XX X  X",
-	"X   XX X  X",
-	"X XXXX X  X",
-	"X    X    X",
-	"XT   X    X",
-	"XXXXXXXXXXX",
-]
-
 export async function main() {
-	asd.geschwindigkeit = 10000000000
-	//console.log(asd.pos())
-	asd.stiftHoch()
-	asd.vorwärts(-15)
-	asd.drehenRechts(90)
-	asd.dicke = 30
-	let t
-	asd.for(L1.length, (zeile) => {
-		asd.for(L1[zeile].length, (spalte) => {
-			if (L1[zeile][spalte] == "X") {
-				asd.stiftRunter()
-			}
-			if (L1[zeile][spalte] == "T") {
-				t = asd.pos()
-			}
-			asd.vorwärts(30)
-			asd.stiftHoch()
-		})
-		asd.drehenRechts(90)
-		asd.vorwärts(30)
-		asd.drehenLinks(90)
-		asd.rückwärts(L1[zeile].length * 30)
-	})
-	asd.geheZu(t)
-	asd.vorwärts(15)
+  asd.verstecken(true)
+  asd.click = meinClick;
 
-	asd.stiftRunter()
-	asd.drehenLinks(90)
-	asd.dicke = 1
-	asd.taste = meineTaste;
-	asd.tick = meinTick;
-	asd.click = meinClick;
+  //asd.farbe(0.5)
+  //asd.dicke = 20
+  //asd.text(0, 0, "Hallo", 20)
+  for (let i = 0; i <= 60; i += 20) {
+    asd.farbe(Math.random())
+    asd.linie(0, i, 60, 0)
+    asd.linie(i, 0, 0, 60)
+  }
+  asd.farbe('blue')
 }
-let pause = true // false
-let gs = 3
-let kugelWinkel = 0.0
-let gk = 5
 
-function meinTick() {
-	kugel()
-	asd.farbe(Math.random())
-	if (!pause) {
-		asd.vorwärts(gs)
-	}
-	wände()
-}
+let spieler = 1
+let links = [0, 0, 0]
+let mitte = [0, 0, 0]
+let rechts = [0, 0, 0]
 
 function meinClick(p: Point) {
-	asd.geheZu(p)
+  for (let i = 0; i <= 40; i = i + 20) {
+    let a = i / 20
+    if (p.x > 0 && p.x < 0 + 20 &&
+      p.y > i && p.y < i + 20) {
+      if (links[a] == 0) {
+        asd.rect(0, i, 20, 20)
+        links[a] = 1
+        spielerWechsel();
+      }
+    }
+    if (p.x > 20 && p.x < 20 + 20 &&
+      p.y > i && p.y < i + 20) {
+      if (mitte[a] == 0) {
+        asd.rect(20, i, 20, 20)
+        mitte[a] = 1
+        spielerWechsel()
+      }
+    }
+    if (p.x > 40 && p.x < 40 + 20 &&
+      p.y > i && p.y < i + 20) {
+      if (rechts[a] == 0) {
+        asd.rect(40, i, 20, 20)
+        rechts[a] = 1
+        spielerWechsel()
+      }
+    }
+  }
+  ende()
 }
 
-function meineTaste(c: string) {
-	if (c == "s") {
-		asd.rückwärts(10)
-	} else if (c == "a") {
-		asd.drehenLinks(22.5)
-	} else if (c == "d") {
-		asd.drehenRechts(22.5)
-	} else if (c == "w") {
-		//asd.vorwärts(10)
-
-	} else if (c == " ") {
-		pause = !pause
-	} else if (c == "e") {
-		asd.stiftHoch()
-	} else if (c == "q") {
-		asd.stiftRunter()
-	} else if (c == "Escape") {
-		kugelWinkel = 0
-		asd.neu()
-		main()
-		return
-	} else {
-		console.log(c)
-	}
+function ende() {
+  if (links[0] == 1 && links[1] == 1 && links[2] == 1 &&
+    rechts[0] == 1 && rechts[1] == 1 && rechts[2] == 1 &&
+    mitte[0] == 1 && mitte[1] == 1 && mitte[2] == 1) {
+    asd.neu()
+    main()
+    spieler = 1
+    links = [0, 0, 0]
+    mitte = [0, 0, 0]
+    rechts = [0, 0, 0]
+  }
 }
 
-function wände() {
-	let t = asd.pos()
-	//console.log(t)
-	let zeile = Math.floor(t.y / 30)
-	let spalte = Math.floor(t.x / 30)
-	if (t.x < 0 || t.y < 0 || t.y > 30 * L1.length || t.x > 30 * L1[zeile].length) {
-		//asd.neu()
-		//main()
-		return
-	}
-	if (L1[zeile][spalte] == "X") {
-		kugelWinkel = 0
-		asd.neu()
-		main()
-		return
-	}
-}
-
-function kugel() {
-	if (!pause) {
-		kugelWinkel += gk;
-	}
-	// asd.farbe(Math.random())
-	const pos = asd.pos()
-	const winkel = asd.winkel()
-	asd.neu()
-	main()
-	asd.stiftHoch()
-	let x = 175 + Math.sin(kugelWinkel / 360 * 2 * Math.PI) * 80
-	let y = 175 - Math.cos(kugelWinkel / 360 * 2 * Math.PI) * 80
-	asd.geheZu({ x, y })
-	asd.stiftRunter()
-	asd.dicke = 10
-	asd.segment(20, 360)
-	asd.stiftHoch()
-	asd.geheZu(pos)
-	asd.drehenLinks(asd.winkel())
-	asd.drehenRechts(winkel)
-	asd.dicke = 1
-	asd.stiftRunter()
-	let dx = x - pos.x
-	let dy = y - pos.y
-	let abstand = Math.sqrt(dx * dx + dy * dy)
-	if (abstand <= 14) {
-		kugelWinkel = 0
-		asd.neu()
-		main()
-	}
+function spielerWechsel() {
+  if (spieler == 1) {
+    asd.farbe('red');
+    spieler = 2;
+  } else {
+    asd.farbe('blue');
+    spieler = 1;
+  }
 }

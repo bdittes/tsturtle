@@ -11,6 +11,12 @@ window.addEventListener("load", async (e) => {
   }
   console.log('start hash', url.hash);
   const hashP = new URLSearchParams(url.hash);
+  ['x', 'y', 'z'].forEach((a) => {
+    if (hashP.has('#' + a)) {
+      hashP.set(a, hashP.get('#' + a)!);
+      hashP.delete('#' + a);
+    }
+  });
 
   let cameraOffset = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
   let cameraZoom = Number(hashP.get('z') || 1);
@@ -37,12 +43,10 @@ window.addEventListener("load", async (e) => {
   }
 
   function updateUrl() {
+    hashP.forEach((v, k, p) => { hashP.delete(k); });
     ['x', 'y', 'z'].forEach((a) => {
       if (!hashP.has(a)) {
         hashP.append(a, '0');
-      }
-      if (hashP.has('#' + a)) {
-        hashP.delete('#' + a);
       }
     });
     hashP.set('x', `${cameraOffset.x}`);

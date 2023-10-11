@@ -1,6 +1,6 @@
 export type Color = string;
 export type Point = { x: number, y: number };
-export type State = { pos: Point, winkel: number, farbe: Color, malen: boolean };
+export type State = { pos: Point, winkel: number, farbe: Color, malen: boolean, versteckt: boolean };
 export type Line = { a: Point, b: Point, c: Color, d: number };
 export type Rect = { a: Point, b: Point, c: Color };
 export type Text = { p: Point, text: string, c: Color, size: number, font: string };
@@ -27,7 +27,7 @@ function drawText(ctx: CanvasRenderingContext2D, t: Text) {
   ctx.fillText(t.text, t.p.x, t.p.y);
 }
 
-const neuState: State = { pos: { x: 0, y: 0 }, winkel: 0, farbe: "#fff", malen: true };
+const neuState: State = { pos: { x: 0, y: 0 }, winkel: 0, farbe: "#fff", malen: true, versteckt: false };
 
 class Turtle {
   #state = { ...neuState };
@@ -137,6 +137,31 @@ class Turtle {
     this.#state = { ...neuState };
     world.clear();
   }
+  verstecken(v: boolean) {
+    this.#state.versteckt = v
+    this.#moveState()
+  }
+
+  linie(x: number, y: number, w: number, h: number) {
+    const l: Line = { a: { x, y }, b: { x: x + w, y: y + h }, c: this.#state.farbe, d: this.dicke };
+    world.move(async () => {
+      world.draw((ctx) => drawLine(ctx, l));
+    })
+  }
+
+  rect(x: number, y: number, w: number, h: number) {
+    const r: Rect = { a: { x, y }, b: { x: x + w, y: y + h }, c: this.#state.farbe };
+    world.move(async () => {
+      world.draw((ctx) => drawRect(ctx, r));
+    })
+  }
+
+  text(x: number, y: number, text: string, s: number) {
+    const t: Text = { p: { x, y }, font: 'Arial', c: this.#state.farbe, size: s, text: text };
+    world.move(async () => {
+      world.draw((ctx) => drawText(ctx, t));
+    })
+  }
 
   // In a normally running program, this does nothing.
   // When step-by-step debugging, an 'await ping()' in the program allows
@@ -191,18 +216,20 @@ class World {
   drawOnCanvas(ctx: CanvasRenderingContext2D) {
     this.#drawFns.forEach((f) => f(ctx));
     const t = this.turtleState;
-    drawLine(
-      ctx, {
-      a: newPos(t.pos, t.winkel - 90, 5),
-      b: newPos(t.pos, t.winkel - (t.malen ? 0 : 15), t.malen ? 10 : 7),
-      c: t.farbe, d: 1
-    });
-    drawLine(
-      ctx, {
-      a: newPos(t.pos, t.winkel + 90, 5),
-      b: newPos(t.pos, t.winkel + (t.malen ? 0 : 15), t.malen ? 10 : 7),
-      c: t.farbe, d: 1
-    });
+    if (!t.versteckt) {
+      drawLine(
+        ctx, {
+        a: newPos(t.pos, t.winkel - 90, 5),
+        b: newPos(t.pos, t.winkel - (t.malen ? 0 : 15), t.malen ? 10 : 7),
+        c: t.farbe, d: 1
+      });
+      drawLine(
+        ctx, {
+        a: newPos(t.pos, t.winkel + 90, 5),
+        b: newPos(t.pos, t.winkel + (t.malen ? 0 : 15), t.malen ? 10 : 7),
+        c: t.farbe, d: 1
+      });
+    }
     this.drawnVersion = this.movedVersion;
   }
 
