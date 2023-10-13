@@ -14,6 +14,8 @@ export async function main() {
     asd.linie(0, i, 60, 0)
     asd.linie(i, 0, 0, 60)
   }
+  asd.farbe('white')
+  asd.text(0, -10, "Tic Tac Toe", 10)
   asd.farbe('blue')
 }
 
@@ -64,37 +66,65 @@ function meinClick(p: Point) {
 }
 
 function ende() {
+  for (let i = 0; i <= 2; i += 1) {
+    if (links[i] != 0 && links[i] == mitte[i] && mitte[i] == rechts[i]) {
+      asd.farbe('green')
+      asd.text(0, 70, "gewonnen", 10)
+      asd.sleep(10000)
+      asd.neu()
+      main()
+      return
+    }
+  }
+
+  if (links[0] != 0 && links[0] == links[1] && links[1] == links[2]) {
+    asd.farbe('green')
+    asd.text(0, 70, "gewonnen", 10)
+    asd.sleep(10000)
+    asd.neu()
+    main()
+    return
+  }
+  if (mitte[0] != 0 && mitte[0] == mitte[1] && mitte[1] == mitte[2]) {
+    asd.farbe('green')
+    asd.text(0, 70, "gewonnen", 10)
+    asd.sleep(10000)
+    asd.neu()
+    main()
+    return
+  }
+  if (rechts[0] != 0 && rechts[0] == rechts[1] && rechts[1] == rechts[2]) {
+    asd.farbe('green')
+    asd.text(0, 70, "gewonnen", 10)
+    asd.sleep(10000)
+    asd.neu()
+    main()
+    return
+  }
+  if (links[0] != 0 && links[0] == mitte[1] && mitte[1] == rechts[2]) {
+    asd.farbe('green')
+    asd.text(0, 70, "gewonnen", 10)
+    asd.sleep(10000)
+
+    asd.neu()
+    main()
+    return
+  }
+  if (links[2] != 0 && links[2] == mitte[1] && mitte[1] == rechts[0]) {
+    asd.farbe('green')
+    asd.text(0, 70, "gewonnen", 10)
+    asd.sleep(10000)
+    asd.neu()
+    main()
+    return
+  }
   if (links[0] > 0 && links[1] > 0 && links[2] > 0 &&
     rechts[0] > 0 && rechts[1] > 0 && rechts[2] > 0 &&
     mitte[0] > 0 && mitte[1] > 0 && mitte[2] > 0) {
-    asd.neu()
-    main()
-  }
-  for (let i = 0; i <= 2; i += 1) {
-    if (links[i] != 0 && links[i] == mitte[i] && mitte[i] == rechts[i]) {
-      asd.neu()
-      main()
-    }
-  }
-  if (links[0] != 0 && links[0] == links[1] && links[1] == links[2]) {
-    asd.neu()
-    main()
-  }
-  if (mitte[0] != 0 && mitte[0] == mitte[1] && mitte[1] == mitte[2]) {
-    asd.neu()
-    main()
-  }
-  if (rechts[0] != 0 && rechts[0] == rechts[1] && rechts[1] == rechts[2]) {
-    asd.neu()
-    main()
-  }
-  if (links[0] != 0 && links[0] == mitte[1] && mitte[1] == rechts[2]) {
-    asd.neu()
-    main()
-  }
-  if (links[2] != 0 && links[2] == mitte[1] && mitte[1] == rechts[0]) {
+    asd.farbe('yellow')
+    asd.text(0, 70, "unentschieden", 10)
+    asd.sleep(10000)
     asd.neu()
     main()
   }
 }
-

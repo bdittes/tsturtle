@@ -31,12 +31,23 @@ const neuState: State = { pos: { x: 0, y: 0 }, winkel: 0, farbe: "#fff", malen: 
 
 class Turtle {
   #state = { ...neuState };
-  #moveRemainder = 0;
+  #sleepRemainder = 0;
   dicke = 1.5;
   geschwindigkeit = 100;
   taste?: (c: string) => Promise<void> | void;
   click?: (p: Point) => Promise<void> | void;
   tick?: () => Promise<void> | void;
+
+  sleep(ms: number) {
+    world.move(async () => {
+      if (ms + this.#sleepRemainder > 10) {
+        await sleep(ms);
+        this.#sleepRemainder = 0;
+      } else {
+        this.#sleepRemainder += ms;
+      }
+    });
+  }
 
   vorwärts(d: number) {
     const waitTime = 100 * Math.abs(d) / this.geschwindigkeit;
@@ -56,14 +67,7 @@ class Turtle {
     }
     this.#state.pos = np;
     this.#moveState()
-    world.move(async () => {
-      if (waitTime + this.#moveRemainder > 10) {
-        await sleep(waitTime);
-        this.#moveRemainder = 0;
-      } else {
-        this.#moveRemainder += waitTime;
-      }
-    });
+    this.sleep(waitTime)
   }
   rückwärts(d: number) {
     this.vorwärts(-d);
