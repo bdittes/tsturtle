@@ -6,17 +6,17 @@ window.addEventListener("load", async (e) => {
   const ctx = canvas.getContext("2d")!;
 
   const url = new URL(window.location.href);
-  while (url.hash.startsWith('#%23')) {
-    url.hash = url.hash.replace('#%23', '');
-  }
-  console.log('start hash', url.hash);
-  const hashP = new URLSearchParams(url.hash);
-  ['x', 'y', 'z'].forEach((a) => {
-    if (hashP.has('#' + a)) {
-      hashP.set(a, hashP.get('#' + a)!);
-      hashP.delete('#' + a);
-    }
-  });
+  // while (url.hash.startsWith('#%23')) {
+  //   url.hash = url.hash.replace('#%23', '');
+  // }
+  // console.log('start hash', url.hash);
+  const hashP = new URLSearchParams(url.hash.slice(1));
+  // ['x', 'y', 'z'].forEach((a) => {
+  //   if (hashP.has('#' + a)) {
+  //     hashP.set(a, hashP.get('#' + a)!);
+  //     hashP.delete('#' + a);
+  //   }
+  // });
 
   let cameraOffset = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
   let cameraZoom = Number(hashP.get('z') || 1);
