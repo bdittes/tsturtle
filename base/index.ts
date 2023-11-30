@@ -22,7 +22,7 @@ window.addEventListener("load", async (e) => {
   let cameraZoom = Number(hashP.get('z') || 1);
   updateUrl();
 
-  const filename = url.searchParams.get('file') || 'turtle';
+  const filename = url.searchParams.get('file') || 'index';
   console.log(filename)
 
   function transform(dp: Point, offset?: Point): Point {

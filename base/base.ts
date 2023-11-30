@@ -136,6 +136,21 @@ class Turtle {
       this.vorwärts(Math.PI * durchmesser * winkel / 360 / n / 2)
     })
   }
+  beep(ms?: number, volume?: number, frequenz?: number) {
+    world.move(async () => {
+      let ctx = new window.AudioContext()
+      let osc = ctx.createOscillator()
+      let gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.type = 'sine'
+      osc.frequency.value = frequenz || 800
+      gain.gain.value = volume || 0.3
+      osc.start()
+      await sleep(ms || 100)
+      osc.stop()
+    })
+  }
 
   neu() {
     this.#state = { ...neuState };
