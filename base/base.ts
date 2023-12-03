@@ -48,6 +48,7 @@ class Turtle {
       }
     });
   }
+  jetztMillis(): number { return new Date().getTime() }
 
   vorwärts(d: number) {
     const waitTime = 100 * Math.abs(d) / this.geschwindigkeit;
@@ -168,11 +169,14 @@ class Turtle {
     })
   }
 
-  rect(x: number, y: number, w: number, h: number) {
+  rechteck(x: number, y: number, w: number, h: number) {
     const r: Rect = { a: { x, y }, b: { x: x + w, y: y + h }, c: this.#state.farbe };
     world.move(async () => {
       world.draw((ctx) => drawRect(ctx, r));
     })
+  }
+  punktInRechteck(p: Point, x: number, y: number, w: number, h: number) {
+    return p.x >= x && p.y >= y && p.x <= x + w && p.y <= y + h;
   }
 
   text(x: number, y: number, text: string, s: number) {

@@ -40,7 +40,7 @@ function meinClick(p: Point) {
     if (p.x > 0 && p.x < 0 + 20 &&
       p.y > i && p.y < i + 20) {
       if (links[a] == 0) {
-        asd.rect(0, i, 20, 20)
+        asd.rechteck(0, i, 20, 20)
         links[a] = spieler
         spielerWechsel();
       }
@@ -48,7 +48,7 @@ function meinClick(p: Point) {
     if (p.x > 20 && p.x < 20 + 20 &&
       p.y > i && p.y < i + 20) {
       if (mitte[a] == 0) {
-        asd.rect(20, i, 20, 20)
+        asd.rechteck(20, i, 20, 20)
         mitte[a] = spieler
         spielerWechsel()
       }
@@ -56,7 +56,7 @@ function meinClick(p: Point) {
     if (p.x > 40 && p.x < 40 + 20 &&
       p.y > i && p.y < i + 20) {
       if (rechts[a] == 0) {
-        asd.rect(40, i, 20, 20)
+        asd.rechteck(40, i, 20, 20)
         rechts[a] = spieler
         spielerWechsel()
       }
