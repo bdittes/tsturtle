@@ -34,8 +34,8 @@ class Turtle {
   #sleepRemainder = 0;
   dicke = 1.5;
   geschwindigkeit = 100;
-  taste?: (c: string) => Promise<void> | void;
-  click?: (p: Point) => Promise<void> | void;
+  taste?: (taste: string) => Promise<void> | void;
+  click?: (punkt: Point) => Promise<void> | void;
   tick?: () => Promise<void> | void;
 
   sleep(ms: number) {
@@ -50,16 +50,16 @@ class Turtle {
   }
   jetztMillis(): number { return new Date().getTime() }
 
-  vorwärts(d: number) {
-    const waitTime = 100 * Math.abs(d) / this.geschwindigkeit;
+  vorwärts(distanz: number) {
+    const waitTime = 100 * Math.abs(distanz) / this.geschwindigkeit;
     if (waitTime > 20) {
       const n = Math.max(2, Math.round(waitTime / 20));
       for (let i = 0; i < n; i++) {
-        this.vorwärts(d / n);
+        this.vorwärts(distanz / n);
       }
       return;
     }
-    const np = newPos(this.#state.pos, this.#state.winkel, d);
+    const np = newPos(this.#state.pos, this.#state.winkel, distanz);
     if (this.#state.malen) {
       const l: Line = { a: this.#state.pos, b: np, c: this.#state.farbe, d: this.dicke };
       world.move(async () => {
@@ -70,23 +70,23 @@ class Turtle {
     this.#moveState()
     this.sleep(waitTime)
   }
-  rückwärts(d: number) {
-    this.vorwärts(-d);
+  rückwärts(dinstanz: number) {
+    this.vorwärts(-dinstanz);
   }
 
   pos(): Point { return this.#state.pos; }
   winkel(): number { return this.#state.winkel; }
-  geheZu(p?: Point) {
-    if (p === undefined) {
+  geheZu(punkt?: Point) {
+    if (punkt === undefined) {
       return;
     }
     if (this.#state.malen) {
-      const l: Line = { a: this.#state.pos, b: p, c: this.#state.farbe, d: this.dicke };
+      const l: Line = { a: this.#state.pos, b: punkt, c: this.#state.farbe, d: this.dicke };
       world.move(async () => {
         world.draw((ctx) => drawLine(ctx, l));
       })
     }
-    this.#state.pos = p;
+    this.#state.pos = punkt;
     this.#moveState()
   }
 
@@ -137,7 +137,7 @@ class Turtle {
       this.vorwärts(Math.PI * durchmesser * winkel / 360 / n / 2)
     })
   }
-  beep(ms?: number, volume?: number, frequenz?: number) {
+  beep(ms?: number, lautstärke?: number, frequenz?: number) {
     world.move(async () => {
       let ctx = new window.AudioContext()
       let osc = ctx.createOscillator()
@@ -146,7 +146,7 @@ class Turtle {
       gain.connect(ctx.destination)
       osc.type = 'sine'
       osc.frequency.value = frequenz || 800
-      gain.gain.value = volume || 0.3
+      gain.gain.value = lautstärke || 0.3
       osc.start()
       await sleep(ms || 100)
       osc.stop()
@@ -162,25 +162,25 @@ class Turtle {
     this.#moveState()
   }
 
-  linie(x: number, y: number, w: number, h: number) {
-    const l: Line = { a: { x, y }, b: { x: x + w, y: y + h }, c: this.#state.farbe, d: this.dicke };
+  linie(x: number, y: number, breite: number, höhe: number) {
+    const l: Line = { a: { x, y }, b: { x: x + breite, y: y + höhe }, c: this.#state.farbe, d: this.dicke };
     world.move(async () => {
       world.draw((ctx) => drawLine(ctx, l));
     })
   }
 
-  rechteck(x: number, y: number, w: number, h: number) {
-    const r: Rect = { a: { x, y }, b: { x: x + w, y: y + h }, c: this.#state.farbe };
+  rechteck(x: number, y: number, breite: number, höhe: number) {
+    const r: Rect = { a: { x, y }, b: { x: x + breite, y: y + höhe }, c: this.#state.farbe };
     world.move(async () => {
       world.draw((ctx) => drawRect(ctx, r));
     })
   }
-  punktInRechteck(p: Point, x: number, y: number, w: number, h: number) {
-    return p.x >= x && p.y >= y && p.x <= x + w && p.y <= y + h;
+  punktInRechteck(p: Point, x: number, y: number, breite: number, höhe: number) {
+    return p.x >= x && p.y >= y && p.x <= x + breite && p.y <= y + höhe;
   }
 
-  text(x: number, y: number, text: string, s: number) {
-    const t: Text = { p: { x, y }, font: 'Arial', c: this.#state.farbe, size: s, text: text };
+  text(x: number, y: number, text: string, grösse: number) {
+    const t: Text = { p: { x, y }, font: 'Arial', c: this.#state.farbe, size: grösse, text: text };
     world.move(async () => {
       world.draw((ctx) => drawText(ctx, t));
     })

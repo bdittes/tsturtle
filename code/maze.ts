@@ -51,7 +51,7 @@ export async function main() {
 let pause = true // false
 let gs = 3
 let kugelWinkel = 0.0
-let gk = 5
+let gk = 1
 
 function meinTick() {
 	kugel()

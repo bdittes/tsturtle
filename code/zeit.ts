@@ -7,6 +7,7 @@ let gestartet = 300
 export function main() {
   asd.verstecken(true)
   asd.click = meinClick
+  asd.tick = meinTick
 
   //asd.rect(125, 125, 125, 125)
   asd.linie(0, 0, 0, 125)
@@ -22,15 +23,27 @@ export function main() {
   asd.text(80, 66, 'test', 15)
 
   asd.text(10, 111, '-10:00', 33)
-  asd.text(10, 36, `${rest}`, 26)
+  asd.text(10, 36, `${rest - (asd.jetztMillis() - start)}`, 26)
+}
+
+function meinTick() {
+  asd.neu()
+  main()
+  if (rest - (asd.jetztMillis() - start) < 0) {
+    entchen()
+  }
+}
+
+function meinClick(p: Point) {
+  if (asd.punktInRechteck(p, 75, 50, 50, 25)) {
+    asd.beep(500, 1, 444)
+  }
+  if (asd.punktInRechteck(p, 0, 75, 125, 50)) {
+    rest = rest - 600000
+  }
 }
 
 let töne: { [key: string]: number } = { 'c': 264, 'd': 297, 'e': 330, 'f': 352, 'g': 396, 'a': 440, 'h': 494, 'c2': 528 }
-
-function meinClick(p: Point) {
-  //if (zwischen 75, 50 bis 125, 75) {}
-}
-
 function entchen() {
   asd.beep(100, 1, 10)
   let ente = 'cdefggaaaagaaaagffffeeggggc'
@@ -42,5 +55,3 @@ function entchen() {
     asd.sleep(10)
   }
 }
-
-
