@@ -6,19 +6,9 @@ window.addEventListener("load", async (e) => {
   const ctx = canvas.getContext("2d")!;
 
   const url = new URL(window.location.href);
-  // while (url.hash.startsWith('#%23')) {
-  //   url.hash = url.hash.replace('#%23', '');
-  // }
-  // console.log('start hash', url.hash);
   const hashP = new URLSearchParams(url.hash.slice(1));
-  // ['x', 'y', 'z'].forEach((a) => {
-  //   if (hashP.has('#' + a)) {
-  //     hashP.set(a, hashP.get('#' + a)!);
-  //     hashP.delete('#' + a);
-  //   }
-  // });
 
-  let cameraOffset = { x: Number(hashP.get('x') || window.innerWidth / 2), y: Number(hashP.get('y') || window.innerHeight / 2) };
+  let cameraOffset = { x: Number(hashP.get('x') || 0), y: Number(hashP.get('y') || 0) };
   let cameraZoom = Number(hashP.get('z') || 1);
   updateUrl();
 
@@ -28,8 +18,8 @@ window.addEventListener("load", async (e) => {
   function transform(dp: Point, offset?: Point): Point {
     const o = offset || cameraOffset;
     const tx = {
-      x: (dp.x - window.innerWidth / 2) / cameraZoom + window.innerWidth / 2 - o.x,
-      y: (dp.y - window.innerHeight / 2) / cameraZoom + window.innerHeight / 2 - o.y,
+      x: (dp.x - window.innerWidth / 2) / cameraZoom - o.x,
+      y: (dp.y - window.innerHeight / 2) / cameraZoom - o.y,
     };
     return tx;
   }
@@ -43,7 +33,7 @@ window.addEventListener("load", async (e) => {
   }
 
   function updateUrl() {
-    hashP.forEach((v, k, p) => { hashP.delete(k); });
+    //hashP.forEach((v, k, p) => { hashP.delete(k); });
     ['x', 'y', 'z'].forEach((a) => {
       if (!hashP.has(a)) {
         hashP.append(a, '0');
@@ -53,7 +43,6 @@ window.addEventListener("load", async (e) => {
     hashP.set('y', `${cameraOffset.y}`);
     hashP.set('z', `${cameraZoom}`);
     url.hash = hashP.toString();
-    // console.log('hash', url.hash);
     history.replaceState('', '', url.toString());
   }
 
@@ -73,10 +62,7 @@ window.addEventListener("load", async (e) => {
     // Translate to the canvas centre before zooming - so you'll always zoom on what you're looking directly at
     ctx.translate(window.innerWidth / 2, window.innerHeight / 2);
     ctx.scale(cameraZoom, cameraZoom);
-    ctx.translate(
-      -window.innerWidth / 2 + cameraOffset.x,
-      -window.innerHeight / 2 + cameraOffset.y
-    );
+    ctx.translate(cameraOffset.x, cameraOffset.y);
     world.drawOnCanvas(ctx);
     requestAnimationFrame(draw);
   }
