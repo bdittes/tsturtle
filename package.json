@@ -6,13 +6,15 @@
     "run": "npm run clean && shx mkdir web/js && npm run index && tsc --watch",
     "build": "npm run clean && tsc --sourceRoot /tsturtle && npm run index && shx mkdir dist && shx cp -r web/* dist && shx cp -r base code dist",
     "clean": "shx rm -rf dist web/js",
-    "index": "shx ls code/*.ts > web/js/index.txt"
+    "index": "shx ls code/*.ts > web/js/index.txt",
+    "jupy": "python -m notebook --config ./.jupyter/jupyter_notebook_config.py"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "shx": "^0.3.4",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "tslab": "^1.0.21"
   }
 }
