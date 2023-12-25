@@ -1,0 +1,14 @@
+{
+  "name": "jutsyturtle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "python -m notebook --config ./.jupyter/jupyter_notebook_config.py"
+  },
+  "author": "Benjamin Dittes",
+  "license": "ISC",
+  "dependencies": {
+    "tslab": "^1.0.21"
+  }
+}

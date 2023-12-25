@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 web/js
+.ipynb_checkpoints
+migrated
