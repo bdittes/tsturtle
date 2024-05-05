@@ -1,3 +1,4 @@
+import test1wsgl from '../shaders/test1.wgsl';
 
 window.addEventListener("load", async (e) => {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -43,18 +44,7 @@ window.addEventListener("load", async (e) => {
   };
   const cellShaderModule = device.createShaderModule({
     label: "Cell shader",
-    code: `
-    @vertex
-    fn vertexMain(@location(0) pos: vec2f) ->
-      @builtin(position) vec4f {
-      return vec4f(pos.xy, 0, 1);
-    }
-
-    @fragment
-    fn fragmentMain() -> @location(0) vec4f {
-      return vec4f(1, 0, 0, 1); // (Red, Green, Blue, Alpha)
-    }
-    `
+    code: test1wsgl
   });
   // https://webgpu.github.io/webgpu-samples/?sample=helloTriangle
   const cellPipeline = device.createRenderPipeline({
@@ -63,7 +53,7 @@ window.addEventListener("load", async (e) => {
     vertex: {
       module: cellShaderModule,
       entryPoint: "vertexMain",
-      //###buffers: [vertexBufferLayout]
+      //buffers: [vertexBufferLayout]
     },
     fragment: {
       module: cellShaderModule,
