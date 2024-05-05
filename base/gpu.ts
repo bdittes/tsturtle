@@ -41,9 +41,10 @@ window.addEventListener("load", async (e) => {
       shaderLocation: 0, // Position, see vertex shader
     }],
   };
+  console.log(document.URL);
   const cellShaderModule = device.createShaderModule({
     label: "Cell shader",
-    code: await (await fetch('../../shaders/test1.wgsl')).text()
+    code: await (await fetch('/tsturtle/shaders/test1.wgsl')).text()
   });
   // https://webgpu.github.io/webgpu-samples/?sample=helloTriangle
   const cellPipeline = device.createRenderPipeline({
@@ -60,6 +61,9 @@ window.addEventListener("load", async (e) => {
       targets: [{
         format: canvasFormat
       }]
+    },
+    primitive: {
+      topology: "triangle-list"
     }
   });
 

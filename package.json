@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "main": "web/index.html",
   "scripts": {
-    "run": "npm run clean && shx mkdir web/js && npm run index && tsc --watch",
-    "build": "npm run clean && tsc --sourceRoot /tsturtle && npm run index && shx cp -r shaders web && shx mkdir dist && shx cp -r web/* dist && shx cp -r base code dist",
-    "clean": "shx rm -rf dist web/js && shx rm -rf dist web/shaders",
-    "index": "shx ls code/*.ts > web/js/index.txt",
+    "clean": "shx rm -rf dist web/js && shx mkdir web/js && shx ls code/*.ts > web/js/index.txt",
+    "run": "npm run clean && tsc --watch",
+    "build": "npm run clean && tsc --sourceRoot /tsturtle && shx mkdir -p dist/tsturtle&& shx cp -r web/* dist/tsturtle && shx cp -r base code shaders dist/tsturtle",
     "jupy": "python -m notebook --config ./.jupyter/jupyter_notebook_config.py"
   },
   "author": "",
