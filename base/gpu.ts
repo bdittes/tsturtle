@@ -1,4 +1,3 @@
-import test1wsgl from '../shaders/test1.wgsl';
 
 window.addEventListener("load", async (e) => {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -44,7 +43,7 @@ window.addEventListener("load", async (e) => {
   };
   const cellShaderModule = device.createShaderModule({
     label: "Cell shader",
-    code: test1wsgl
+    code: await (await fetch('../../shaders/test1.wgsl')).text()
   });
   // https://webgpu.github.io/webgpu-samples/?sample=helloTriangle
   const cellPipeline = device.createRenderPipeline({
@@ -52,7 +51,7 @@ window.addEventListener("load", async (e) => {
     layout: "auto",
     vertex: {
       module: cellShaderModule,
-      entryPoint: "vertexMain",
+      entryPoint: "vertex1",
       //buffers: [vertexBufferLayout]
     },
     fragment: {
