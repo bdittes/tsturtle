@@ -17,6 +17,8 @@ let L1 = [
 export async function main() {
 	asd.geschwindigkeit = 10000000000
 	//console.log(asd.pos())
+	asd.text(0, -20, "A - links, D - rechts", 30)
+	asd.text(0, -50, "Leertaste - Pause", 30)
 	asd.stiftHoch()
 	asd.vorwärts(-15)
 	asd.drehenRechts(90)
